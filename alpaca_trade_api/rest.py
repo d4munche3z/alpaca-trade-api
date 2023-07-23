@@ -609,6 +609,7 @@ class REST(object):
                         start: Optional[str] = None,
                         end: Optional[str] = None,
                         limit: int = None,
+                        page_token: str= None,
                         feed: Optional[str] = None,
                         asof: Optional[str] = None,
                         raw=False) -> TradeIterator:
@@ -616,6 +617,7 @@ class REST(object):
                                 start=start,
                                 end=end,
                                 limit=limit,
+                                page_token=page_token,
                                 feed=feed,
                                 asof=asof,
                                 )
@@ -630,6 +632,7 @@ class REST(object):
                    start: Optional[str] = None,
                    end: Optional[str] = None,
                    limit: int = None,
+                   page_token: str= None,
                    feed: Optional[str] = None,
                    asof: Optional[str] = None,
                    ) -> TradesV2:
@@ -637,16 +640,19 @@ class REST(object):
                                            start=start,
                                            end=end,
                                            limit=limit,
+                                           page_token=page_token,
                                            feed=feed,
                                            asof=asof,
                                            raw=True))
-        return TradesV2(trades)
+        page_token = trades.pop()
+        return trades, page_token
 
     def get_quotes_iter(self,
                         symbol: Union[str, List[str]],
                         start: Optional[str] = None,
                         end: Optional[str] = None,
                         limit: int = None,
+                        page_token: str= None,
                         feed: Optional[str] = None,
                         asof: Optional[str] = None,
                         raw=False) -> QuoteIterator:
@@ -654,6 +660,7 @@ class REST(object):
                                 start=start,
                                 end=end,
                                 limit=limit,
+                                page_token=page_token,
                                 feed=feed,
                                 asof=asof,
                                 )
@@ -668,6 +675,7 @@ class REST(object):
                    start: Optional[str] = None,
                    end: Optional[str] = None,
                    limit: int = None,
+                   page_token: str= None,
                    feed: Optional[str] = None,
                    asof: Optional[str] = None,
                    ) -> QuotesV2:
@@ -675,11 +683,13 @@ class REST(object):
                                            start=start,
                                            end=end,
                                            limit=limit,
+                                           page_token=page_token,
                                            feed=feed,
                                            raw=True,
                                            asof=asof,
                                            ))
-        return QuotesV2(quotes)
+        page_token = quotes.pop()
+        return quotes, page_token
 
     def get_bars_iter(self,
                       symbol: Union[str, List[str]],
@@ -688,6 +698,7 @@ class REST(object):
                       end: Optional[str] = None,
                       adjustment: str = 'raw',
                       limit: int = None,
+                      page_token: str= None,
                       feed: Optional[str] = None,
                       asof: Optional[str] = None,
                       raw=False) -> BarIterator:
@@ -697,6 +708,7 @@ class REST(object):
                               start=start,
                               end=end,
                               limit=limit,
+                              page_token=page_token,
                               feed=feed,
                               asof=asof)
         for bar in bars:
@@ -712,6 +724,7 @@ class REST(object):
                  end: Optional[str] = None,
                  adjustment: str = 'raw',
                  limit: int = None,
+                 page_token: str= None,
                  feed: Optional[str] = None,
                  asof: Optional[str] = None,
                  ) -> BarsV2:
@@ -721,11 +734,12 @@ class REST(object):
                                        end,
                                        adjustment,
                                        limit,
+                                       page_token=page_token,
                                        feed=feed,
                                        asof=asof,
                                        raw=True))
-        return BarsV2(bars)
-
+        page_token = bars.pop()
+        return bars, page_token
     def get_latest_bar(self, symbol: str, feed: Optional[str] = None) -> BarV2:
         resp = self.data_get(
             '/stocks/{}/bars/latest'.format(symbol),
