@@ -719,7 +719,7 @@ class REST(object):
 
     def get_bars(self,
                  symbol: Union[str, List[str]],
-                 timeframe: TimeFrame,
+                 timeframe: TimeFrame = 'Min',
                  start: Optional[str] = None,
                  end: Optional[str] = None,
                  adjustment: str = 'raw',
